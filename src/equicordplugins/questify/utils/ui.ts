@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { classNameFactory } from "@utils/css";
+import { managedStyleRootNode } from "@api/Styles";
+import { classNameFactory, createAndAppendStyle } from "@utils/css";
 import { findByPropsLazy } from "@webpack";
 
 import type { QuestButtonDisplayMode, QuestButtonIndicatorMode } from "../settings/def";
@@ -20,6 +21,20 @@ export const q = classNameFactory("questify-");
 export const leftClick = 0;
 export const middleClick = 1;
 export const rightClick = 2;
+
+let questHomeHeroBannerStyle: HTMLStyleElement | null = null;
+
+export function setQuestHomeHeroBannerHidden(hidden: boolean): void {
+    if (hidden) {
+        questHomeHeroBannerStyle ??= createAndAppendStyle("QuestifyHideQuestHomeHeroBanner", managedStyleRootNode);
+        questHomeHeroBannerStyle.textContent = `div:has(> [data-testid="quest-home-hero-banner"]) {
+            display: none !important;
+        }`;
+    } else {
+        questHomeHeroBannerStyle?.remove();
+        questHomeHeroBannerStyle = null;
+    }
+}
 
 export function decimalToRGB(decimal: number): RGB {
     return {

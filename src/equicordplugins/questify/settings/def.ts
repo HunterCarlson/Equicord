@@ -40,6 +40,7 @@ export const defaultRightClickAction: QuestButtonAction = "context-menu";
 export const defaultDisableQuestsEverything = false;
 export const defaultDisableRelocationNotices = true;
 export const defaultDisableSponsoredBanner = false;
+export const defaultDisableQuestHomeHeroBanner = false;
 export const defaultDisableAccountPanelPromo = true;
 export const defaultDisableAccountPanelQuestProgress = false;
 export const defaultDisableOrbsAndQuestsBadges = false;

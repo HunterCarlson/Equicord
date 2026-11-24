@@ -33,7 +33,7 @@ import { normalizeQuestName } from "./utils/filtering";
 import { notifyQuestCompletion, QL } from "./utils/logging";
 import { getQuestEmbedProgress, getQuestPanelOverride, getQuestPanelPercentComplete, shouldForceQuestPanelVisible } from "./utils/questState";
 import { getLastFilterChoices, getLastSortChoice, getQuestClaimDeadlineText, getQuestTileClasses, getQuestTileStyle, setLastFilterChoices, setLastSortChoice, shouldPreloadQuestAssets, sortQuests } from "./utils/questTiles";
-import { QUEST_PAGE } from "./utils/ui";
+import { QUEST_PAGE, setQuestHomeHeroBannerHidden } from "./utils/ui";
 
 let isPluginStarted = false;
 let activeAccountUserId: string | null = null;
@@ -693,6 +693,8 @@ export default definePlugin({
 
     start() {
         isPluginStarted = true;
+        const questifySettings = getQuestifySettings();
+        setQuestHomeHeroBannerHidden(questifySettings.disableQuestHomeHeroBanner || questifySettings.disableQuestsEverything);
 
         if (!enabledOnStartup && PlainSettings.plugins.Questify?.enabled) {
             setRestartDirty(true);
@@ -721,6 +723,7 @@ export default definePlugin({
 
     stop() {
         isPluginStarted = false;
+        setQuestHomeHeroBannerHidden(false);
 
         const pluginEnabled = Settings.plugins.Questify?.enabled;
         const userId = activeAccountUserId ?? getCurrentUserId();

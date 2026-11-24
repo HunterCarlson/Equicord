@@ -11,7 +11,7 @@ import { getQuestifySettings, useQuestifySettings } from "../settings/access";
 import { resetDangerousSettings } from "../settings/dangerous";
 import { autoCompleteQuestTaskTypes, defaultAutoCompleteQuestTypes, isAutoCompleteCompatible } from "../settings/def";
 import { validateIgnoredQuests } from "../settings/ignoredQuests";
-import { Alerts, q } from "../utils/ui";
+import { Alerts, q, setQuestHomeHeroBannerHidden } from "../utils/ui";
 import { ManaButton, type ManaSelectOption, SettingsCard, SettingsDescription, SettingsHeader, SettingsNotice, SettingsParagraph, SettingsSelect, SettingsSubheader, SettingsSubtleSwitch } from "./shared";
 
 type QuestDisableSettingKey =
@@ -20,6 +20,7 @@ type QuestDisableSettingKey =
     | "disableFriendsListPromo"
     | "disableMembersListPromo"
     | "disableOrbsAndQuestsBadges"
+    | "disableQuestHomeHeroBanner"
     | "disableRelocationNotices"
     | "disableSponsoredBanner";
 
@@ -42,6 +43,10 @@ const disableFeatureOptions = [
     {
         key: "disableSponsoredBanner",
         label: "Sponsored Banner",
+    },
+    {
+        key: "disableQuestHomeHeroBanner",
+        label: "Quest Home Hero Banner",
     },
     {
         key: "disableRelocationNotices",
@@ -101,6 +106,7 @@ export function QuestFeaturesSetting(): JSX.Element {
     const questFeatures = useQuestifySettings([
         "disableQuestsEverything",
         "disableSponsoredBanner",
+        "disableQuestHomeHeroBanner",
         "disableRelocationNotices",
         "disableFriendsListPromo",
         "disableMembersListPromo",
@@ -134,6 +140,9 @@ export function QuestFeaturesSetting(): JSX.Element {
         for (const { key } of disableFeatureOptions) {
             getQuestifySettings()[key] = selectedKeys.has(key);
         }
+
+        const settings = getQuestifySettings();
+        setQuestHomeHeroBannerHidden(settings.disableQuestHomeHeroBanner || settings.disableQuestsEverything);
     }
 
     function confirmDangerousSettingChange(body: string, onConfirm: () => void) {
@@ -164,7 +173,9 @@ export function QuestFeaturesSetting(): JSX.Element {
 
     function updateDisableEverything(checked: boolean) {
         function setDisableEverything() {
-            getQuestifySettings().disableQuestsEverything = checked;
+            const settings = getQuestifySettings();
+            settings.disableQuestsEverything = checked;
+            setQuestHomeHeroBannerHidden(settings.disableQuestHomeHeroBanner || settings.disableQuestsEverything);
         }
 
         if (checked) {
@@ -232,6 +243,7 @@ export function QuestFeaturesSetting(): JSX.Element {
                 tooltip={{
                     position: "top",
                     text: "Sponsored Banner is a paid-for Quest banner at the top of the Quests page."
+                        + "\n\nQuest Home Hero Banner is the large banner at the top of the Quest home page."
                         + "\n\nRelocation Notices are indicators such as in the Discovery page about Quests moving to DMs."
                         + "\n\nFriends List Promo is a card that displays on the \"Active Now\" section of your Friends List while a user you share a server with is playing a game with an active Quest."
                         + "\n\nMembers List Promo is an icon that displays on members in a server's Members List while they are playing a game with an active Quest."
